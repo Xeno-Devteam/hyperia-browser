@@ -51,6 +51,7 @@ const pages = {
 const state = {
   history: ['hyperia.local'],
   index: 0,
+  iframeMode: false,
 };
 
 const createElement = (tag, props = {}, children = []) => {
@@ -101,7 +102,10 @@ const navigate = async (route) => {
     if (!proceed) return;
   }
 
-  // Update history and load in iframe
+  // For real websites, open in new tab by default
+  window.open(fullUrl, '_blank', 'noopener,noreferrer');
+
+  // Update history
   if (state.history[state.index] !== fullUrl) {
     state.history = state.history.slice(0, state.index + 1);
     state.history.push(fullUrl);

@@ -5,17 +5,17 @@
   "author": "Xeno-Devteam",
   "private": true,
   "type": "module",
-  "main": "dist-electron/main.js",
+  "main": "main.js",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
     "electron": "electron .",
     "electron-dev": "concurrently \"npm run dev\" \"wait-on http://localhost:5173 && electron .\"",
-    "electron-pack": "npm run build && electron-builder",
-    "electron-pack-win": "npm run build && electron-builder --win",
-    "electron-pack-mac": "npm run build && electron-builder --mac",
-    "electron-pack-linux": "npm run build && electron-builder --linux"
+    "electron-pack": "npm run build && cp main.js dist-electron/ && electron-builder",
+    "electron-pack-win": "npm run build && cp main.js dist-electron/ && electron-builder --win",
+    "electron-pack-mac": "npm run build && cp main.js dist-electron/ && electron-builder --mac",
+    "electron-pack-linux": "npm run build && cp main.js dist-electron/ && electron-builder --linux"
   },
   "build": {
     "appId": "com.hyperia.browser",
