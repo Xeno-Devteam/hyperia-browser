@@ -151,6 +151,17 @@ body {
   background: white;
 }
 
+.iframe-fallback {
+  margin-top: 8px;
+  text-align: center;
+}
+
+.iframe-fallback-text {
+  color: #94a3b8;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
 .content-card {
   max-width: 720px;
   margin: 0 auto;

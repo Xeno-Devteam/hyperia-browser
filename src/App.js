@@ -141,6 +141,7 @@ let refreshButton;
 let externalButton;
 let contentIframe;
 let contentContainer;
+let iframeFallback;
 
 const renderApp = () => {
   const currentUrl = state.history[state.index];
@@ -154,6 +155,7 @@ const renderApp = () => {
     contentBody.textContent = page.body;
     contentContainer.style.display = 'block';
     if (contentIframe) contentIframe.style.display = 'none';
+    if (iframeFallback) iframeFallback.style.display = 'none';
     if (externalButton) externalButton.disabled = true;
   } else {
     // Show iframe for real websites
@@ -162,6 +164,7 @@ const renderApp = () => {
       contentIframe.style.display = 'block';
     }
     contentContainer.style.display = 'none';
+    if (iframeFallback) iframeFallback.style.display = 'block';
     if (externalButton) externalButton.disabled = false;
   }
 
@@ -216,8 +219,12 @@ export const renderBrowser = (root) => {
     ])),
     (contentIframe = createElement('iframe', {
       className: 'browser-iframe',
-      style: 'display: none; width: 100%; height: 600px; border: none;'
+      style: 'display: none; width: 100%; border: none;',
+      allow: 'fullscreen'
     })),
+    (iframeFallback = createElement('div', { className: 'iframe-fallback' }, [
+      createElement('small', { className: 'iframe-fallback-text' }, ['If the page doesn\'t load, try the ↗ button to open externally.'])
+    ]))
   ]);
 
   const warningBanner = createElement('div', { className: 'beta-warning' }, [
