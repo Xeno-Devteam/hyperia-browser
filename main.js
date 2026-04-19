@@ -65,15 +65,16 @@ app.on('window-all-closed', () => {
   }
 });
 
-// Security: Disable navigation to external websites from within the app
+// Security: Only restrict main window navigation, allow webview for external sites
 app.on('web-contents-created', (event, contents) => {
   contents.on('will-navigate', (event, navigationUrl) => {
-    // Only prevent navigation for the main window
+    // Only prevent navigation for the main window, not for webviews
     if (contents === mainWindow.webContents) {
       const parsedUrl = new URL(navigationUrl);
       if (parsedUrl.origin !== 'http://localhost:5173' && parsedUrl.origin !== 'file://') {
         event.preventDefault();
       }
     }
+    // Allow webviews (nested-frame) to navigate freely to external sites
   });
 });

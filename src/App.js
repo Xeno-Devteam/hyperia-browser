@@ -176,7 +176,7 @@ const renderApp = () => {
     // Show embedded content for real websites
     if (contentIframe) {
       if (isElectron) {
-        contentIframe.src = currentUrl;
+        contentIframe.setAttribute('src', currentUrl);
         contentIframe.style.display = 'block';
       } else {
         contentIframe.style.display = 'none';
@@ -251,9 +251,12 @@ export const renderBrowser = (root) => {
     ])),
     (contentIframe = createElement(contentIframeTag, {
       className: 'browser-iframe',
-      style: 'display: none; width: 100%; border: none;',
-      allow: 'fullscreen',
-      ...(isElectron ? { webpreferences: 'webSecurity=no' } : {})
+      style: 'display: none; width: 100%; height: 100%; border: none;',
+      allow: 'fullscreen *',
+      ...(isElectron ? { 
+        webpreferences: 'webSecurity=no, enableRemoteModule=no, nodeIntegration=no',
+        sandbox: 'allow-same-origin allow-top-navigation allow-scripts allow-forms allow-popups allow-modals allow-presentation'
+      } : {})
     })),
     (iframeFallback = createElement('div', { className: 'iframe-fallback' }, [
       createElement('small', { className: 'iframe-fallback-text' }, [
