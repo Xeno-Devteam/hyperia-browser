@@ -23,7 +23,7 @@ function createWindow() {
       nodeIntegration: false,
       contextIsolation: true,
       enableRemoteModule: false,
-      webSecurity: false,
+      webSecurity: true,
       webviewTag: true,
       preload: preloadPath
     },
