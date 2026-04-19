@@ -102,9 +102,7 @@ const navigate = async (route) => {
     if (!proceed) return;
   }
 
-  // For real websites, open in new tab by default
-  window.open(fullUrl, '_blank', 'noopener,noreferrer');
-
+  // For real websites, load in iframe
   // Update history
   if (state.history[state.index] !== fullUrl) {
     state.history = state.history.slice(0, state.index + 1);

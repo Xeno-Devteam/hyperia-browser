@@ -12,6 +12,7 @@ function createWindow() {
       nodeIntegration: false,
       contextIsolation: true,
       enableRemoteModule: false,
+      webSecurity: false,
       preload: path.join(__dirname, 'dist-electron/preload.js')
     },
     icon: path.join(__dirname, 'public/icon.png'),
