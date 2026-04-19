@@ -7,6 +7,7 @@ const ASSETS_TO_CACHE = [
   '/src/App.js',
   '/manifest.webmanifest',
   '/icon.svg',
+  '/sw.js',
 ];
 
 self.addEventListener('install', (event) => {

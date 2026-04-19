@@ -124,6 +124,13 @@ const goForward = () => {
   }
 };
 
+const openCurrentExternally = () => {
+  const currentUrl = state.history[state.index];
+  if (!currentUrl.includes('hyperia.local')) {
+    window.open(currentUrl, '_blank', 'noopener,noreferrer');
+  }
+};
+
 let addressInput;
 let contentTitle;
 let contentSubtitle;
@@ -131,6 +138,7 @@ let contentBody;
 let backButton;
 let forwardButton;
 let refreshButton;
+let externalButton;
 let contentIframe;
 let contentContainer;
 
@@ -146,6 +154,7 @@ const renderApp = () => {
     contentBody.textContent = page.body;
     contentContainer.style.display = 'block';
     if (contentIframe) contentIframe.style.display = 'none';
+    if (externalButton) externalButton.disabled = true;
   } else {
     // Show iframe for real websites
     if (contentIframe) {
@@ -153,6 +162,7 @@ const renderApp = () => {
       contentIframe.style.display = 'block';
     }
     contentContainer.style.display = 'none';
+    if (externalButton) externalButton.disabled = false;
   }
 
   backButton.disabled = state.index === 0;
@@ -180,6 +190,7 @@ export const renderBrowser = (root) => {
   backButton = createElement('button', { className: 'tool-button', type: 'button', onClick: goBack }, ['◀']);
   forwardButton = createElement('button', { className: 'tool-button', type: 'button', onClick: goForward }, ['▶']);
   refreshButton = createElement('button', { className: 'tool-button', type: 'button', onClick: () => renderApp() }, ['⟳']);
+  externalButton = createElement('button', { className: 'tool-button', type: 'button', onClick: openCurrentExternally }, ['↗']);
   addressInput = createElement('input', { className: 'address-input', type: 'text', placeholder: 'https://hyperia.local', value: 'https://hyperia.local' });
 
   addressInput.addEventListener('keydown', (event) => {
@@ -188,7 +199,7 @@ export const renderBrowser = (root) => {
     }
   });
 
-  toolbar.append(backButton, forwardButton, refreshButton, addressInput);
+  toolbar.append(backButton, forwardButton, refreshButton, externalButton, addressInput);
 
   const tabs = createElement('div', { className: 'tabs' }, [
     createElement('button', { className: 'tab active', type: 'button', onClick: () => navigate('hyperia.local') }, ['Demo']),

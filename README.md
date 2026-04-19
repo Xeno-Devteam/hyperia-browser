@@ -78,6 +78,21 @@ This project is currently a web app, so creating a native iOS `.ipa` requires wr
 ### Web Version
 The browser works directly in modern web browsers and can be installed as a Progressive Web App (PWA).
 
+### Publish as a Website
+This repo is configured to publish as a static website using Vite:
+
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Build the site:
+   ```bash
+   npm run build
+   ```
+3. Serve the output from the `dist/` directory.
+
+The app is PWA-ready with `manifest.webmanifest`, service worker registration, and a standalone install experience. If a website does not allow iframe embedding, use the external open button (↗) in the browser toolbar to open the page in a new tab.
+
 ## Security Features
 
 - **Website Security Checks**: Before loading external websites, the browser performs basic security analysis
