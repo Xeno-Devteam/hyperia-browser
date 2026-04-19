@@ -153,13 +153,7 @@ const renderApp = () => {
   updateAddressBar(addressInput);
 
   if (electronModeBanner) {
-    electronModeBanner.style.display = isElectron ? 'none' : 'flex';
-    const bannerText = electronModeBanner.querySelector('.electron-warning-text');
-    if (bannerText) {
-      bannerText.textContent = isMobileBrowser
-        ? 'Mobile browsers can use this demo directly. External websites will open in a new tab.'
-        : 'External website embedding requires the Electron desktop app. In browser mode, real sites open in a new tab.';
-    }
+    electronModeBanner.style.display = 'none';
   }
 
   if (currentUrl.includes('hyperia.local')) {
@@ -175,21 +169,15 @@ const renderApp = () => {
   } else {
     // Show embedded content for real websites
     if (contentIframe) {
-      if (isElectron) {
-        contentIframe.setAttribute('src', currentUrl);
-        contentIframe.style.display = 'block';
-      } else {
-        contentIframe.style.display = 'none';
-      }
+      contentIframe.setAttribute('src', currentUrl);
+      contentIframe.style.display = 'block';
     }
 
     contentContainer.style.display = 'none';
     if (iframeFallback) {
       iframeFallback.style.display = 'block';
       const fallbackText = iframeFallback.querySelector('.iframe-fallback-text');
-      const message = isElectron
-        ? "If the embedded page doesn't load, try the ↗ button to open externally."
-        : 'External sites are opened in a new browser tab in normal browser mode.';
+      const message = "If the page doesn't load, the website may not allow embedding. Try the ↗ button to open externally.";
       if (fallbackText) {
         fallbackText.textContent = message;
       } else {
@@ -242,7 +230,7 @@ export const renderBrowser = (root) => {
     createElement('button', { className: 'tab add', type: 'button', onClick: () => navigate('hyperia.local') }, ['+']),
   ]);
 
-  const contentIframeTag = isElectron ? 'webview' : 'iframe';
+  const contentIframeTag = 'iframe';
   const content = createElement('div', { className: 'browser-content' }, [
     (contentContainer = createElement('div', { className: 'content-card' }, [
       (contentTitle = createElement('h1', { className: 'content-title' })),
@@ -253,16 +241,11 @@ export const renderBrowser = (root) => {
       className: 'browser-iframe',
       style: 'display: none; width: 100%; height: 100%; border: none;',
       allow: 'fullscreen *',
-      ...(isElectron ? { 
-        webpreferences: 'webSecurity=no, enableRemoteModule=no, nodeIntegration=no',
-        sandbox: 'allow-same-origin allow-top-navigation allow-scripts allow-forms allow-popups allow-modals allow-presentation'
-      } : {})
+      sandbox: 'allow-same-origin allow-top-navigation allow-scripts allow-forms allow-popups allow-modals allow-presentation allow-pointer-lock'
     })),
     (iframeFallback = createElement('div', { className: 'iframe-fallback' }, [
       createElement('small', { className: 'iframe-fallback-text' }, [
-        isElectron
-          ? 'If the page doesn\'t load, try the ↗ button to open externally.'
-          : 'External sites often cannot be embedded in a normal browser due to security restrictions. Run the Electron app or use the ↗ button.'
+        'Loading website...'
       ])
     ]))
   ]);
@@ -280,21 +263,12 @@ export const renderBrowser = (root) => {
   root.append(app);
 
   if (contentIframe && iframeFallback) {
-    if (isElectron) {
-      contentIframe.addEventListener('dom-ready', () => {
-        iframeFallback.style.display = 'none';
-      });
-      contentIframe.addEventListener('did-fail-load', () => {
-        iframeFallback.style.display = 'block';
-      });
-    } else {
-      contentIframe.addEventListener('load', () => {
-        iframeFallback.style.display = 'none';
-      });
-      contentIframe.addEventListener('error', () => {
-        iframeFallback.style.display = 'block';
-      });
-    }
+    contentIframe.addEventListener('load', () => {
+      iframeFallback.style.display = 'none';
+    });
+    contentIframe.addEventListener('error', () => {
+      iframeFallback.style.display = 'block';
+    });
   }
 
   renderApp();
