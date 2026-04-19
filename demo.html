@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hyperia Browser Demo</title>
+    <meta name="description" content="A clean, standalone browser demo that can be opened directly without setup." />
+    <style>
+      * { box-sizing: border-box; }
+      html, body { margin: 0; min-height: 100%; }
+      body {
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        color: #e2e8f0;
+        background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.14), transparent 24%), linear-gradient(180deg, #02040a 0%, #090d16 100%);
+        display: flex; align-items: center; justify-content: center; padding: 24px;
+      }
+      .browser-shell {
+        width: min(1120px, 100%);
+        border-radius: 28px;
+        overflow: hidden;
+        background: rgba(15, 23, 42, 0.95);
+        border: 1px solid rgba(148, 163, 184, 0.12);
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.42);
+      }
+      .title-bar, .toolbar, .tabs { display: flex; align-items: center; gap: 12px; padding: 16px 20px; }
+      .title-bar { justify-content: space-between; border-bottom: 1px solid rgba(148, 163, 184, 0.08); }
+      .window-controls { display: flex; gap: 10px; }
+      .control { width: 12px; height: 12px; border-radius: 999px; display: inline-block; }
+      .control.red { background: #f87171; } .control.yellow { background: #fbbf24; } .control.green { background: #34d399; }
+      .window-title { font-size: 0.95rem; font-weight: 600; letter-spacing: 0.04em; color: #cbd5e1; }
+      .window-actions { display: flex; justify-content: flex-end; width: 120px; }
+      button, input { border: none; outline: none; font: inherit; }
+      .icon-button, .tool-button, .tab {
+        border-radius: 12px;
+        padding: 10px 14px;
+        cursor: pointer;
+        transition: background 180ms ease, transform 180ms ease;
+        background: rgba(148, 163, 184, 0.08);
+        color: #e2e8f0;
+      }
+      .icon-button:hover, .tool-button:hover, .tab:hover { transform: translateY(-1px); background: rgba(148, 163, 184, 0.15); }
+      .tool-button:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+      .address-input {
+        flex: 1;
+        min-width: 0;
+        border-radius: 14px;
+        border: 1px solid rgba(148, 163, 184, 0.12);
+        color: #e2e8f0;
+        background: rgba(15, 23, 42, 0.88);
+        padding: 12px 16px;
+      }
+      .address-input:focus { border-color: rgba(56, 189, 248, 0.8); box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.1); }
+      .tabs { border-bottom: 1px solid rgba(148, 163, 184, 0.08); overflow-x: auto; }
+      .tab.active { background: rgba(56, 189, 248, 0.18); }
+      .tab.add { min-width: 46px; font-weight: 700; }
+      .browser-content { padding: 36px 40px 48px; }
+      .content-card {
+        max-width: 720px;
+        margin: 0 auto;
+        border-radius: 28px;
+        background: linear-gradient(180deg, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.82));
+        border: 1px solid rgba(148, 163, 184, 0.08);
+        padding: 40px;
+        box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.05);
+      }
+      .content-title { margin: 0 0 12px; font-size: clamp(2rem, 3.4vw, 3rem); letter-spacing: -0.03em; line-height: 1.05; }
+      .content-subtitle { margin: 0 0 24px; color: #94a3b8; font-size: 1rem; line-height: 1.6; }
+      .content-body { margin: 0; color: #cbd5e1; font-size: 1rem; line-height: 1.8; }
+      @media (max-width: 720px) { .title-bar, .toolbar, .tabs { padding: 14px; } .content-card { padding: 28px; } }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script>
+      const pages = {
+        'hyperia.local': {
+          title: 'Hyperia Browser',
+          subtitle: 'A clean, controlled browser demo experience.',
+          body: 'This demo shows a minimal browser shell with responsive controls, quick navigation, and a calm interface designed for speed and focus.',
+        },
+        'hyperia.local/about': {
+          title: 'About the Demo',
+          subtitle: 'Fast and minimal browser UI.',
+          body: 'The interface is intentionally kept simple: a title bar, toolbar, address entry, tabs, and content area. Everything is styled for clarity and fast scanning.',
+        },
+        'hyperia.local/focus': {
+          title: 'Focus Mode',
+          subtitle: 'Controlled browsing made clean.',
+          body: 'Clean design means fewer distractions. The content area is a stable canvas with measured spacing, subtle transitions, and easy-to-scan typography.',
+        },
+      };
+      const state = { history: ['hyperia.local'], index: 0 };
+      const createElement = (tag, props = {}, children = []) => {
+        const el = document.createElement(tag);
+        Object.entries(props).forEach(([key, value]) => {
+          if (key === 'className') el.className = value;
+          else if (key.startsWith('on') && typeof value === 'function') el.addEventListener(key.slice(2).toLowerCase(), value);
+          else el.setAttribute(key, value);
+        });
+        children.forEach((child) => el.append(child));
+        return el;
+      };
+      const getCurrentPage = () => pages[state.history[state.index]] || {
+        title: 'Page not found', subtitle: 'Use the address bar for a controlled demo route.', body: 'Try typing hyperia.local, hyperia.local/about, or hyperia.local/focus.',
+      };
+      const updateAddressBar = (input) => { input.value = `https://${state.history[state.index]}`; };
+      const navigate = (route) => {
+        const cleanRoute = route.replace(/^https?:\/\//i, '').replace(/\/$/, '');
+        const pageKey = cleanRoute || 'hyperia.local';
+        if (state.history[state.index] !== pageKey) {
+          state.history = state.history.slice(0, state.index + 1);
+          state.history.push(pageKey);
+          state.index = state.history.length - 1;
+        }
+        renderApp();
+      };
+      const goBack = () => { if (state.index > 0) { state.index -= 1; renderApp(); } };
+      const goForward = () => { if (state.index < state.history.length - 1) { state.index += 1; renderApp(); } };
+      let addressInput, contentTitle, contentSubtitle, contentBody, backButton, forwardButton;
+      const renderApp = () => {
+        const page = getCurrentPage();
+        updateAddressBar(addressInput);
+        contentTitle.textContent = page.title;
+        contentSubtitle.textContent = page.subtitle;
+        contentBody.textContent = page.body;
+        backButton.disabled = state.index === 0;
+        forwardButton.disabled = state.index >= state.history.length - 1;
+      };
+      const root = document.querySelector('#app');
+      const app = createElement('div', { className: 'browser-shell' });
+      const titleBar = createElement('div', { className: 'title-bar' }, [
+        createElement('div', { className: 'window-controls' }, [
+          createElement('span', { className: 'control red' }),
+          createElement('span', { className: 'control yellow' }),
+          createElement('span', { className: 'control green' }),
+        ]),
+        createElement('div', { className: 'window-title' }, [document.createTextNode('Hyperia Browser Demo')]),
+        createElement('div', { className: 'window-actions' }, [createElement('button', { className: 'icon-button', type: 'button', onClick: () => navigate('hyperia.local') }, ['Home'])]),
+      ]);
+      const toolbar = createElement('div', { className: 'toolbar' });
+      backButton = createElement('button', { className: 'tool-button', type: 'button', onClick: goBack }, ['◀']);
+      forwardButton = createElement('button', { className: 'tool-button', type: 'button', onClick: goForward }, ['▶']);
+      const refreshButton = createElement('button', { className: 'tool-button', type: 'button', onClick: renderApp }, ['⟳']);
+      addressInput = createElement('input', { className: 'address-input', type: 'text', placeholder: 'https://hyperia.local', value: 'https://hyperia.local' });
+      addressInput.addEventListener('keydown', (event) => { if (event.key === 'Enter') navigate(addressInput.value.trim()); });
+      toolbar.append(backButton, forwardButton, refreshButton, addressInput);
+      const tabs = createElement('div', { className: 'tabs' }, [
+        createElement('button', { className: 'tab active', type: 'button', onClick: () => navigate('hyperia.local') }, ['Demo']),
+        createElement('button', { className: 'tab', type: 'button', onClick: () => navigate('hyperia.local/about') }, ['About']),
+        createElement('button', { className: 'tab', type: 'button', onClick: () => navigate('hyperia.local/focus') }, ['Focus']),
+        createElement('button', { className: 'tab add', type: 'button', onClick: () => navigate('hyperia.local') }, ['+']),
+      ]);
+      const content = createElement('div', { className: 'browser-content' }, [
+        createElement('div', { className: 'content-card' }, [
+          (contentTitle = createElement('h1', { className: 'content-title' })),
+          (contentSubtitle = createElement('p', { className: 'content-subtitle' })),
+          (contentBody = createElement('p', { className: 'content-body' })),
+        ]),
+      ]);
+      app.append(titleBar, toolbar, tabs, content);
+      root.append(app);
+      renderApp();
+    </script>
+  </body>
+</html>
