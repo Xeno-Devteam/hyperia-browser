@@ -55,6 +55,7 @@ const state = {
 };
 
 const isElectron = typeof navigator !== 'undefined' && navigator.userAgent.toLowerCase().includes('electron');
+const isMobileBrowser = typeof navigator !== 'undefined' && /Mobi|Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
 
 const createElement = (tag, props = {}, children = []) => {
   const el = document.createElement(tag);
@@ -166,6 +167,12 @@ const renderApp = () => {
 
   if (electronModeBanner) {
     electronModeBanner.style.display = isElectron ? 'none' : 'flex';
+    const bannerText = electronModeBanner.querySelector('.electron-warning-text');
+    if (bannerText) {
+      bannerText.textContent = isMobileBrowser
+        ? 'Mobile browsers can use this demo directly. External websites will open in a new tab.'
+        : 'External website embedding requires the Electron desktop app. In browser mode, real sites open in a new tab.';
+    }
   }
 
   if (currentUrl.includes('hyperia.local')) {
@@ -271,7 +278,7 @@ export const renderBrowser = (root) => {
   ]);
 
   electronModeBanner = createElement('div', { className: 'electron-warning' }, [
-    createElement('p', { className: 'electron-warning-text' }, ['Real website embedding only works in Electron. Run ', createElement('strong', {}, ['npm start']), ' or ', createElement('strong', {}, ['npm run electron']), '.'])
+    createElement('p', { className: 'electron-warning-text' }, ['Real website embedding only works in Electron. In browser mode, external sites open in a new tab.'])
   ]);
 
   const warningBanner = createElement('div', { className: 'beta-warning' }, [
