@@ -6,7 +6,7 @@ const ASSETS_TO_CACHE = [
   '/src/main.js',
   '/src/App.js',
   '/manifest.webmanifest',
-  '/icon.svg',
+  '/logo.svg',
   '/sw.js',
 ];
 

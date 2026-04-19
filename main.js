@@ -6,9 +6,9 @@ const isDev = process.env.NODE_ENV === 'development';
 const preloadPath = fs.existsSync(path.join(__dirname, 'preload.js'))
   ? path.join(__dirname, 'preload.js')
   : path.join(__dirname, 'dist-electron/preload.js');
-const iconPath = fs.existsSync(path.join(__dirname, 'public', 'icon.png'))
-  ? path.join(__dirname, 'public', 'icon.png')
-  : path.join(__dirname, '../public/icon.png');
+const iconPath = fs.existsSync(path.join(__dirname, 'public', 'logo.svg'))
+  ? path.join(__dirname, 'public', 'logo.svg')
+  : path.join(__dirname, '../public/logo.svg');
 const indexHtmlPath = fs.existsSync(path.join(__dirname, 'dist', 'index.html'))
   ? path.join(__dirname, 'dist', 'index.html')
   : path.join(__dirname, '../dist/index.html');

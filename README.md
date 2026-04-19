@@ -163,4 +163,4 @@ When hosted or served locally, the app supports browser install prompts:
 - `src/style.css` — minimal browser-style theme
 - `public/manifest.webmanifest` — installable web app manifest
 - `public/sw.js` — optional caching service worker
-- `public/icon.svg` — install icon for the web app
+- `public/logo.svg` — install icon for the web app
