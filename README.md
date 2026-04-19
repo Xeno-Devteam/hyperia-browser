@@ -10,7 +10,7 @@ Download the latest pre-built binaries:
 - **Linux**: [Hyperia Browser-1.0.0.AppImage](dist-electron/Hyperia%20Browser-1.0.0.AppImage)
 - **Windows 11**: Build with `npm run electron-pack-win` (generates .exe)
 - **Mac**: Build with `npm run electron-pack-mac` (generates .app)
-- **Android**: [Download APK](./HyperiaBrowser.apk)
+- **Android**: [Download APK](./Hyperia-Browser.apk)
 - **iOS**: Build a native `.ipa` using Capacitor + Xcode (see below)
 
 ### Desktop Applications
