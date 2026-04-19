@@ -4,6 +4,15 @@ A clean, minimal browser with installable web-app support for Linux, Mac, Window
 
 ## Downloads
 
+### Pre-built Binaries
+Download the latest pre-built binaries:
+
+- **Linux**: [Hyperia Browser-1.0.0.AppImage](dist-electron/Hyperia%20Browser-1.0.0.AppImage)
+- **Windows 11**: Build with `npm run electron-pack-win` (generates .exe)
+- **Mac**: Build with `npm run electron-pack-mac` (generates .app)
+- **Android**: Use as PWA or build with Capacitor for APK
+- **iOS**: Use as PWA or build with Capacitor for IPA
+
 ### Desktop Applications
 Build the desktop versions using Electron:
 
