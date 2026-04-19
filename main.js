@@ -1,6 +1,17 @@
 const { app, BrowserWindow, Menu } = require('electron');
+const fs = require('fs');
 const path = require('path');
 const isDev = process.env.NODE_ENV === 'development';
+
+const preloadPath = fs.existsSync(path.join(__dirname, 'preload.js'))
+  ? path.join(__dirname, 'preload.js')
+  : path.join(__dirname, 'dist-electron/preload.js');
+const iconPath = fs.existsSync(path.join(__dirname, 'public', 'icon.png'))
+  ? path.join(__dirname, 'public', 'icon.png')
+  : path.join(__dirname, '../public/icon.png');
+const indexHtmlPath = fs.existsSync(path.join(__dirname, 'dist', 'index.html'))
+  ? path.join(__dirname, 'dist', 'index.html')
+  : path.join(__dirname, '../dist/index.html');
 
 let mainWindow;
 
@@ -14,9 +25,9 @@ function createWindow() {
       enableRemoteModule: false,
       webSecurity: false,
       webviewTag: true,
-      preload: path.join(__dirname, 'dist-electron/preload.js')
+      preload: preloadPath
     },
-    icon: path.join(__dirname, 'public/icon.png'),
+    icon: iconPath,
     titleBarStyle: 'hiddenInset',
     show: false
   });
@@ -25,7 +36,7 @@ function createWindow() {
     mainWindow.loadURL('http://localhost:5173');
     mainWindow.webContents.openDevTools();
   } else {
-    mainWindow.loadFile(path.join(__dirname, 'dist/index.html'));
+    mainWindow.loadFile(indexHtmlPath);
   }
 
   mainWindow.once('ready-to-show', () => {

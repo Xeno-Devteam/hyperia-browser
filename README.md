@@ -14,7 +14,11 @@ Download the latest pre-built binaries:
 - **iOS**: Build a native `.ipa` using Capacitor + Xcode (see below)
 
 ### Desktop Applications
-Build the desktop versions using Electron:
+You can run the app directly with the prebuilt Linux AppImage in this repo:
+
+- Open `dist-electron/Hyperia Browser-1.0.0.AppImage` on Linux
+
+If you want to build from source, use Electron:
 
 ```bash
 # Install dependencies
@@ -27,6 +31,9 @@ npm run electron-pack-mac      # For macOS
 ```
 
 The built applications will be in the `dist-electron` directory.
+
+### Run without commands
+If you just want to try the browser without setup, open `demo.html` or `index.html` in your browser. This works immediately as a local demo, and external sites will open in a normal browser tab when not running in Electron.
 
 ### Mobile Applications
 For mobile apps, you can use Capacitor or React Native. The web version works as a PWA on mobile devices.

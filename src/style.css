@@ -197,6 +197,29 @@ body {
   line-height: 1.8;
 }
 
+.electron-warning {
+  display: none;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: rgba(56, 189, 248, 0.12);
+  color: #dbeafe;
+  border: 1px solid rgba(56, 189, 248, 0.24);
+  margin: 0 20px 12px;
+}
+
+.electron-warning-text {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.electron-warning-text strong {
+  color: #bfdbfe;
+}
+
 .beta-warning {
   position: fixed;
   right: 12px;

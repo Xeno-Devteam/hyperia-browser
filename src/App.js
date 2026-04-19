@@ -104,8 +104,20 @@ const navigate = async (route) => {
     if (!proceed) return;
   }
 
-  // For real websites, load in iframe
-  // Update history
+  if (!isElectron) {
+    // In a normal browser, open real sites externally instead of embedding.
+    window.open(fullUrl, '_blank', 'noopener,noreferrer');
+
+    if (state.history[state.index] !== fullUrl) {
+      state.history = state.history.slice(0, state.index + 1);
+      state.history.push(fullUrl);
+      state.index = state.history.length - 1;
+    }
+    renderApp();
+    return;
+  }
+
+  // For real websites, load in webview in Electron
   if (state.history[state.index] !== fullUrl) {
     state.history = state.history.slice(0, state.index + 1);
     state.history.push(fullUrl);
@@ -146,10 +158,15 @@ let externalButton;
 let contentIframe;
 let contentContainer;
 let iframeFallback;
+let electronModeBanner;
 
 const renderApp = () => {
   const currentUrl = state.history[state.index];
   updateAddressBar(addressInput);
+
+  if (electronModeBanner) {
+    electronModeBanner.style.display = isElectron ? 'none' : 'flex';
+  }
 
   if (currentUrl.includes('hyperia.local')) {
     // Show demo content
@@ -164,11 +181,27 @@ const renderApp = () => {
   } else {
     // Show embedded content for real websites
     if (contentIframe) {
-      contentIframe.src = currentUrl;
-      contentIframe.style.display = 'block';
+      if (isElectron) {
+        contentIframe.src = currentUrl;
+        contentIframe.style.display = 'block';
+      } else {
+        contentIframe.style.display = 'none';
+      }
     }
+
     contentContainer.style.display = 'none';
-    if (iframeFallback) iframeFallback.style.display = 'none';
+    if (iframeFallback) {
+      iframeFallback.style.display = 'block';
+      const fallbackText = iframeFallback.querySelector('.iframe-fallback-text');
+      const message = isElectron
+        ? "If the embedded page doesn't load, try the ↗ button to open externally."
+        : 'External sites are opened in a new browser tab in normal browser mode.';
+      if (fallbackText) {
+        fallbackText.textContent = message;
+      } else {
+        iframeFallback.textContent = message;
+      }
+    }
     if (externalButton) externalButton.disabled = false;
   }
 
@@ -229,15 +262,23 @@ export const renderBrowser = (root) => {
       ...(isElectron ? { webpreferences: 'webSecurity=no' } : {})
     })),
     (iframeFallback = createElement('div', { className: 'iframe-fallback' }, [
-      createElement('small', { className: 'iframe-fallback-text' }, ['If the page doesn\'t load, try the ↗ button to open externally.'])
+      createElement('small', { className: 'iframe-fallback-text' }, [
+        isElectron
+          ? 'If the page doesn\'t load, try the ↗ button to open externally.'
+          : 'External sites often cannot be embedded in a normal browser due to security restrictions. Run the Electron app or use the ↗ button.'
+      ])
     ]))
+  ]);
+
+  electronModeBanner = createElement('div', { className: 'electron-warning' }, [
+    createElement('p', { className: 'electron-warning-text' }, ['Real website embedding only works in Electron. Run ', createElement('strong', {}, ['npm start']), ' or ', createElement('strong', {}, ['npm run electron']), '.'])
   ]);
 
   const warningBanner = createElement('div', { className: 'beta-warning' }, [
     createElement('p', { className: 'beta-warning-text' }, ['*Project still in beta v.1.0. If you find a bug, please go to the GitHub page (https://github.com/Xeno-Devteam/hyperia-browser), go to Issues, and create a new issue explaining the error, and we will try our best to fix it.'])
   ]);
 
-  app.append(titleBar, toolbar, tabs, content, warningBanner);
+  app.append(titleBar, toolbar, electronModeBanner, tabs, content, warningBanner);
   root.innerHTML = '';
   root.append(app);
 
