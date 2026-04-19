@@ -15,9 +15,9 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "vite": "^8.0.8",
-    "electron": "^25.0.0",
-    "electron-builder": "^24.0.0"
+    "electron": "^41.2.1",
+    "electron-builder": "^26.8.1",
+    "vite": "^8.0.8"
   },
   "build": {
     "appId": "com.hyperia.browser",
