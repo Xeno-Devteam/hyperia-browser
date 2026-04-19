@@ -9,7 +9,7 @@ A clean, minimal browser demo with installable web-app support for Linux, Mac, W
 - Extract it.
 - Open `demo.html` in any modern browser.
 
-This is the easiest no-setup option for Linux, Mac, and Windows.
+This is the easiest no-setup option for Linux, Mac, Windows, Android, and iOS.
 
 ### 2. Run locally with Vite
 1. Install dependencies:
@@ -32,12 +32,14 @@ This is the easiest no-setup option for Linux, Mac, and Windows.
    npm run preview
    ```
 
-### 4. Use as an installable web app
+### 4. Install as a Progressive Web App
 When hosted or served locally, the app supports browser install prompts:
 - Windows 11: Install from Edge or Chrome via the app install button.
 - Mac: Install from Safari/Chrome with "Add to Home Screen" or "Install App".
 - Android: Install from Chrome via "Add to Home Screen".
 - iOS: Open in Safari and use "Add to Home Screen".
+
+> If you open `index.html` directly from the file system, use `demo.html` instead for immediate no-setup preview.
 
 ## Download options
 - Clone the repo:

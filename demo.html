@@ -9,64 +9,196 @@
       * { box-sizing: border-box; }
       html, body { margin: 0; min-height: 100%; }
       body {
+        min-height: 100vh;
         font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        color: #e2e8f0;
-        background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.14), transparent 24%), linear-gradient(180deg, #02040a 0%, #090d16 100%);
-        display: flex; align-items: center; justify-content: center; padding: 24px;
+        color: #e8f0ff;
+        background: radial-gradient(circle at top left, rgba(207, 114, 255, 0.2), transparent 24%),
+          radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.18), transparent 24%),
+          linear-gradient(180deg, #02040a 0%, #090c16 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
       }
       .browser-shell {
-        width: min(1120px, 100%);
-        border-radius: 28px;
+        width: min(1200px, 100%);
+        min-height: 720px;
+        border-radius: 32px;
         overflow: hidden;
-        background: rgba(15, 23, 42, 0.95);
-        border: 1px solid rgba(148, 163, 184, 0.12);
-        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.42);
+        background: linear-gradient(180deg, rgba(10, 14, 28, 0.98), rgba(5, 8, 18, 0.98));
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 40px 120px rgba(0, 0, 0, 0.35);
+        display: grid;
+        grid-template-columns: 96px 1fr;
       }
-      .title-bar, .toolbar, .tabs { display: flex; align-items: center; gap: 12px; padding: 16px 20px; }
-      .title-bar { justify-content: space-between; border-bottom: 1px solid rgba(148, 163, 184, 0.08); }
-      .window-controls { display: flex; gap: 10px; }
-      .control { width: 12px; height: 12px; border-radius: 999px; display: inline-block; }
-      .control.red { background: #f87171; } .control.yellow { background: #fbbf24; } .control.green { background: #34d399; }
-      .window-title { font-size: 0.95rem; font-weight: 600; letter-spacing: 0.04em; color: #cbd5e1; }
-      .window-actions { display: flex; justify-content: flex-end; width: 120px; }
-      button, input { border: none; outline: none; font: inherit; }
-      .icon-button, .tool-button, .tab {
-        border-radius: 12px;
-        padding: 10px 14px;
-        cursor: pointer;
-        transition: background 180ms ease, transform 180ms ease;
-        background: rgba(148, 163, 184, 0.08);
-        color: #e2e8f0;
+      .sidebar {
+        background: rgba(9, 12, 24, 0.95);
+        border-right: 1px solid rgba(148, 163, 184, 0.08);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 24px 0;
       }
-      .icon-button:hover, .tool-button:hover, .tab:hover { transform: translateY(-1px); background: rgba(148, 163, 184, 0.15); }
-      .tool-button:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-      .address-input {
-        flex: 1;
-        min-width: 0;
+      .sidebar-logo {
+        width: 44px;
+        height: 44px;
         border-radius: 14px;
+        background: linear-gradient(135deg, #a855f7, #38bdf8);
+        display: grid;
+        place-items: center;
+        color: white;
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 32px;
+      }
+      .nav-button {
+        width: 56px;
+        height: 56px;
+        margin-bottom: 16px;
+        border-radius: 18px;
+        border: 1px solid rgba(148, 163, 184, 0.08);
+        background: rgba(255, 255, 255, 0.04);
+        color: #cbd5e1;
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+        transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+      }
+      .nav-button:hover,
+      .nav-button.active {
+        transform: translateY(-2px);
+        background: rgba(56, 189, 248, 0.16);
+        border-color: rgba(56, 189, 248, 0.4);
+        color: #eff6ff;
+      }
+      .nav-button span { font-size: 1.2rem; }
+      .main-shell {
+        display: flex;
+        flex-direction: column;
+      }
+      .title-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 22px 28px 18px;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+      }
+      .title-left { display: flex; align-items: center; gap: 14px; }
+      .title-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        border-radius: 14px;
+        background: rgba(56, 189, 248, 0.12);
+        color: #cbe7ff;
+        font-size: 0.95rem;
+      }
+      .title-label { color: #94a3b8; font-size: 0.92rem; }
+      .toolbar {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        align-items: center;
+        gap: 14px;
+        padding: 18px 28px 20px;
+      }
+      .toolbar-left,
+      .toolbar-right {
+        display: flex;
+        gap: 12px;
+      }
+      .tool-button,
+      .icon-button {
+        width: 46px;
+        height: 46px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(148, 163, 184, 0.08);
+        color: #eff6ff;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: transform 160ms ease, background 160ms ease;
+        display: grid;
+        place-items: center;
+      }
+      .tool-button:hover,
+      .icon-button:hover { transform: translateY(-1px); background: rgba(255, 255, 255, 0.08); }
+      .address-input {
+        width: 100%;
+        min-width: 0;
+        border-radius: 16px;
         border: 1px solid rgba(148, 163, 184, 0.12);
         color: #e2e8f0;
-        background: rgba(15, 23, 42, 0.88);
-        padding: 12px 16px;
+        background: rgba(15, 23, 42, 0.9);
+        padding: 14px 18px;
+        font-size: 0.97rem;
       }
-      .address-input:focus { border-color: rgba(56, 189, 248, 0.8); box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.1); }
-      .tabs { border-bottom: 1px solid rgba(148, 163, 184, 0.08); overflow-x: auto; }
-      .tab.active { background: rgba(56, 189, 248, 0.18); }
-      .tab.add { min-width: 46px; font-weight: 700; }
-      .browser-content { padding: 36px 40px 48px; }
-      .content-card {
-        max-width: 720px;
-        margin: 0 auto;
-        border-radius: 28px;
-        background: linear-gradient(180deg, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.82));
+      .address-input:focus { border-color: rgba(56, 189, 248, 0.85); box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.1); }
+      .browser-content {
+        padding: 26px 28px 34px;
+        display: grid;
+        gap: 24px;
+      }
+      .status-strip {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 20px;
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.03);
         border: 1px solid rgba(148, 163, 184, 0.08);
-        padding: 40px;
+      }
+      .status-chip { display: inline-flex; gap: 10px; align-items: center; color: #cbd5e1; }
+      .status-chip span { width: 10px; height: 10px; border-radius: 999px; background: #38bdf8; }
+      .tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+      .tile {
+        border-radius: 24px;
+        border: 1px solid rgba(148, 163, 184, 0.08);
+        background: rgba(255, 255, 255, 0.03);
+        padding: 22px;
+      }
+      .tile-title { margin: 0 0 12px; color: #f8fafc; font-size: 0.98rem; }
+      .tile-text { margin: 0; color: #94a3b8; line-height: 1.75; font-size: 0.95rem; }
+      .content-card {
+        border-radius: 28px;
+        background: linear-gradient(180deg, rgba(15, 23, 42, 0.96), rgba(10, 14, 28, 0.96));
+        border: 1px solid rgba(148, 163, 184, 0.08);
+        padding: 38px;
         box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.05);
       }
-      .content-title { margin: 0 0 12px; font-size: clamp(2rem, 3.4vw, 3rem); letter-spacing: -0.03em; line-height: 1.05; }
-      .content-subtitle { margin: 0 0 24px; color: #94a3b8; font-size: 1rem; line-height: 1.6; }
-      .content-body { margin: 0; color: #cbd5e1; font-size: 1rem; line-height: 1.8; }
-      @media (max-width: 720px) { .title-bar, .toolbar, .tabs { padding: 14px; } .content-card { padding: 28px; } }
+      .content-title { margin: 0 0 18px; font-size: clamp(2rem, 3vw, 3rem); letter-spacing: -0.04em; line-height: 1.05; }
+      .content-subtitle { margin: 0 0 20px; color: #94a3b8; font-size: 1rem; line-height: 1.7; }
+      .content-body { margin: 0; color: #e2e8f0; font-size: 1.02rem; line-height: 1.85; }
+      .cta-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        margin-top: 28px;
+      }
+      .cta-button {
+        border-radius: 16px;
+        padding: 14px 22px;
+        border: none;
+        background: linear-gradient(135deg, #38bdf8, #8b5cf6);
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .cta-secondary { color: #94a3b8; }
+      @media (max-width: 1024px) {
+        .browser-shell { display: flex; flex-direction: column; min-height: auto; }
+        .sidebar { flex-direction: row; justify-content: center; padding: 18px; border-right: none; border-bottom: 1px solid rgba(148, 163, 184, 0.08); }
+        .main-shell { width: 100%; }
+        .toolbar { grid-template-columns: 1fr; }
+        .toolbar-left { justify-content: start; }
+      }
+      @media (max-width: 720px) {
+        body { padding: 16px; }
+        .browser-shell { border-radius: 24px; }
+        .title-bar, .toolbar, .browser-content { padding: 18px; }
+        .tiles { grid-template-columns: 1fr; }
+      }
     </style>
   </head>
   <body>
@@ -75,18 +207,18 @@
       const pages = {
         'hyperia.local': {
           title: 'Hyperia Browser',
-          subtitle: 'A clean, controlled browser demo experience.',
-          body: 'This demo shows a minimal browser shell with responsive controls, quick navigation, and a calm interface designed for speed and focus.',
+          subtitle: 'Fast. Focused. Modern browser shell design.',
+          body: 'A clean browser demo inspired by modern gaming browsers. It includes a dark shell, strong accent gradients, quick site tiles, and a focused content area for a fast, polished presentation.',
         },
         'hyperia.local/about': {
           title: 'About the Demo',
-          subtitle: 'Fast and minimal browser UI.',
-          body: 'The interface is intentionally kept simple: a title bar, toolbar, address entry, tabs, and content area. Everything is styled for clarity and fast scanning.',
+          subtitle: 'Designed to feel controlled and premium.',
+          body: 'This demo is intentionally not a full browser implementation. It is built to show the visual style and interaction pattern for a polished browser experience on desktop and mobile.',
         },
         'hyperia.local/focus': {
           title: 'Focus Mode',
-          subtitle: 'Controlled browsing made clean.',
-          body: 'Clean design means fewer distractions. The content area is a stable canvas with measured spacing, subtle transitions, and easy-to-scan typography.',
+          subtitle: 'Simplified navigation, calm content.',
+          body: 'The browser shell keeps distractions low with minimal chrome, a compact sidebar, and a stable content panel that supports quick browsing workflows.',
         },
       };
       const state = { history: ['hyperia.local'], index: 0 };
@@ -101,8 +233,8 @@
         return el;
       };
       const getCurrentPage = () => pages[state.history[state.index]] || {
-        title: 'Page not found', subtitle: 'Use the address bar for a controlled demo route.', body: 'Try typing hyperia.local, hyperia.local/about, or hyperia.local/focus.',
-      };
+        title: 'Page not found', subtitle: 'Try the address bar or choose a tab to continue.', body: 'Use routes like hyperia.local, hyperia.local/about, or hyperia.local/focus in the address field.',
+      }; 
       const updateAddressBar = (input) => { input.value = `https://${state.history[state.index]}`; };
       const navigate = (route) => {
         const cleanRoute = route.replace(/^https?:\/\//i, '').replace(/\/$/, '');
@@ -127,38 +259,64 @@
         forwardButton.disabled = state.index >= state.history.length - 1;
       };
       const root = document.querySelector('#app');
-      const app = createElement('div', { className: 'browser-shell' });
+      const shell = createElement('div', { className: 'browser-shell' });
+      const sidebar = createElement('div', { className: 'sidebar' }, [
+        createElement('div', { className: 'sidebar-logo' }, ['G']),
+        createElement('button', { className: 'nav-button active', type: 'button' }, [createElement('span', {}, ['🏠'])]),
+        createElement('button', { className: 'nav-button', type: 'button' }, [createElement('span', {}, ['🔥'])]),
+        createElement('button', { className: 'nav-button', type: 'button' }, [createElement('span', {}, ['🎮'])]),
+        createElement('button', { className: 'nav-button', type: 'button' }, [createElement('span', {}, ['💬'])]),
+      ]);
+      const main = createElement('div', { className: 'main-shell' });
       const titleBar = createElement('div', { className: 'title-bar' }, [
-        createElement('div', { className: 'window-controls' }, [
-          createElement('span', { className: 'control red' }),
-          createElement('span', { className: 'control yellow' }),
-          createElement('span', { className: 'control green' }),
+        createElement('div', { className: 'title-left' }, [
+          createElement('div', { className: 'title-pill' }, ['Hyperia Browser Demo']),
+          createElement('div', { className: 'title-label' }, ['Fast browser shell preview']),
         ]),
-        createElement('div', { className: 'window-title' }, [document.createTextNode('Hyperia Browser Demo')]),
-        createElement('div', { className: 'window-actions' }, [createElement('button', { className: 'icon-button', type: 'button', onClick: () => navigate('hyperia.local') }, ['Home'])]),
+        createElement('button', { className: 'icon-button', type: 'button', onClick: () => navigate('hyperia.local') }, ['Home']),
       ]);
       const toolbar = createElement('div', { className: 'toolbar' });
+      const toolbarLeft = createElement('div', { className: 'toolbar-left' }, []);
       backButton = createElement('button', { className: 'tool-button', type: 'button', onClick: goBack }, ['◀']);
       forwardButton = createElement('button', { className: 'tool-button', type: 'button', onClick: goForward }, ['▶']);
       const refreshButton = createElement('button', { className: 'tool-button', type: 'button', onClick: renderApp }, ['⟳']);
       addressInput = createElement('input', { className: 'address-input', type: 'text', placeholder: 'https://hyperia.local', value: 'https://hyperia.local' });
       addressInput.addEventListener('keydown', (event) => { if (event.key === 'Enter') navigate(addressInput.value.trim()); });
-      toolbar.append(backButton, forwardButton, refreshButton, addressInput);
-      const tabs = createElement('div', { className: 'tabs' }, [
-        createElement('button', { className: 'tab active', type: 'button', onClick: () => navigate('hyperia.local') }, ['Demo']),
-        createElement('button', { className: 'tab', type: 'button', onClick: () => navigate('hyperia.local/about') }, ['About']),
-        createElement('button', { className: 'tab', type: 'button', onClick: () => navigate('hyperia.local/focus') }, ['Focus']),
-        createElement('button', { className: 'tab add', type: 'button', onClick: () => navigate('hyperia.local') }, ['+']),
-      ]);
+      toolbarLeft.append(backButton, forwardButton, refreshButton);
+      const toolbarRight = createElement('div', { className: 'toolbar-right' }, [addressInput]);
+      toolbar.append(toolbarLeft, toolbarRight);
       const content = createElement('div', { className: 'browser-content' }, [
+        createElement('div', { className: 'status-strip' }, [
+          createElement('div', { className: 'status-chip' }, [createElement('span', {}), document.createTextNode(' Live demo ready')]),
+          createElement('div', { className: 'status-chip' }, [document.createTextNode('Optimized for desktop and mobile')]),
+        ]),
+        createElement('div', { className: 'tiles' }, [
+          createElement('div', { className: 'tile' }, [
+            createElement('h3', { className: 'tile-title' }, ['Quick launch']),
+            createElement('p', { className: 'tile-text' }, ['Type hyperia.local in the address bar or choose the tabs above to move between demo pages.']),
+          ]),
+          createElement('div', { className: 'tile' }, [
+            createElement('h3', { className: 'tile-title' }, ['Modern controls']),
+            createElement('p', { className: 'tile-text' }, ['A compact icon sidebar and smooth toolbar give the demo a premium browser feel.']),
+          ]),
+          createElement('div', { className: 'tile' }, [
+            createElement('h3', { className: 'tile-title' }, ['No setup required']),
+            createElement('p', { className: 'tile-text' }, ['Open demo.html directly in your browser for a fast preview with no build step.']),
+          ]),
+        ]),
         createElement('div', { className: 'content-card' }, [
           (contentTitle = createElement('h1', { className: 'content-title' })),
           (contentSubtitle = createElement('p', { className: 'content-subtitle' })),
           (contentBody = createElement('p', { className: 'content-body' })),
+          createElement('div', { className: 'cta-bar' }, [
+            createElement('button', { className: 'cta-button', type: 'button', onClick: () => navigate('hyperia.local/about') }, ['See About']),
+            createElement('span', { className: 'cta-secondary' }, ['Progressive browser shell preview']),
+          ]),
         ]),
       ]);
-      app.append(titleBar, toolbar, tabs, content);
-      root.append(app);
+      main.append(titleBar, toolbar, content);
+      shell.append(sidebar, main);
+      root.append(shell);
       renderApp();
     </script>
   </body>
