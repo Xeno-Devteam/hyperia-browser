@@ -169,7 +169,16 @@ const renderApp = () => {
   } else {
     // Show embedded content for real websites
     if (contentIframe) {
-      contentIframe.setAttribute('src', currentUrl);
+      try {
+        // Validate URL to prevent injection attacks
+        const urlObj = new URL(currentUrl);
+        if (!['http:', 'https:'].includes(urlObj.protocol)) {
+          throw new Error('Invalid protocol');
+        }
+        contentIframe.setAttribute('src', urlObj.href);
+      } catch (error) {
+        contentIframe.setAttribute('src', 'about:blank');
+      }
       contentIframe.style.display = 'block';
     }
 
