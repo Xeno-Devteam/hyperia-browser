@@ -1,13 +1,42 @@
 {
   "name": "hyperia-browser",
+  "version": "1.0.0",
+  "description": "A clean, minimal browser with security checks",
+  "author": "Xeno-Devteam",
   "private": true,
   "type": "module",
+  "main": "dist-electron/main.js",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "electron": "electron .",
+    "electron-dev": "concurrently \"npm run dev\" \"wait-on http://localhost:5173 && electron .\"",
+    "electron-pack": "npm run build && electron-builder",
+    "electron-pack-win": "npm run build && electron-builder --win",
+    "electron-pack-mac": "npm run build && electron-builder --mac",
+    "electron-pack-linux": "npm run build && electron-builder --linux"
   },
+  "build": {
+    "appId": "com.hyperia.browser",
+    "productName": "Hyperia Browser",
+    "directories": {
+      "output": "dist-electron"
+    },
+    "files": [
+      "dist/**/*",
+      "dist-electron/**/*"
+    ],
+    "linux": {
+      "target": "AppImage"
+    }
+  },
+  "dependencies": {},
   "devDependencies": {
-    "vite": "^5.4.0"
+    "concurrently": "^8.0.0",
+    "electron": "^25.0.0",
+    "electron-builder": "^24.0.0",
+    "vite": "^5.4.0",
+    "wait-on": "^7.0.0"
   }
 }

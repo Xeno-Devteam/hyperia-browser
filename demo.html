@@ -236,12 +236,43 @@
         title: 'Page not found', subtitle: 'Try the address bar or choose a tab to continue.', body: 'Use routes like hyperia.local, hyperia.local/about, or hyperia.local/focus in the address field.',
       }; 
       const updateAddressBar = (input) => { input.value = `https://${state.history[state.index]}`; };
-      const navigate = (route) => {
+      const checkWebsiteSecurity = async (url) => {
+        try {
+          const domain = new URL(url).hostname;
+          const suspiciousPatterns = [/fake/i, /phish/i, /malware/i, /virus/i, /hack/i, /free-money/i, /win-prize/i, /urgent/i, /account-suspended/i];
+          const isSuspicious = suspiciousPatterns.some(pattern => domain.match(pattern));
+          const safeDomains = ['google.com', 'github.com', 'stackoverflow.com', 'wikipedia.org', 'mozilla.org', 'apple.com', 'microsoft.com', 'amazon.com'];
+          const isKnownSafe = safeDomains.some(safe => domain.includes(safe));
+          return {
+            isSafe: !isSuspicious && (isKnownSafe || url.startsWith('https://')),
+            riskLevel: isSuspicious ? 'high' : isKnownSafe ? 'low' : 'medium',
+            warnings: isSuspicious ? ['Domain contains suspicious keywords'] : []
+          };
+        } catch (error) {
+          return { isSafe: false, riskLevel: 'unknown', warnings: ['Unable to analyze URL'] };
+        }
+      };
+      const navigate = async (route) => {
         const cleanRoute = route.replace(/^https?:\/\//i, '').replace(/\/$/, '');
-        const pageKey = cleanRoute || 'hyperia.local';
-        if (state.history[state.index] !== pageKey) {
+        const fullUrl = cleanRoute.startsWith('http') ? cleanRoute : `https://${cleanRoute}`;
+        if (fullUrl.includes('hyperia.local')) {
+          const pageKey = cleanRoute || 'hyperia.local';
+          if (state.history[state.index] !== pageKey) {
+            state.history = state.history.slice(0, state.index + 1);
+            state.history.push(pageKey);
+            state.index = state.history.length - 1;
+          }
+          renderApp();
+          return;
+        }
+        const securityResult = await checkWebsiteSecurity(fullUrl);
+        if (!securityResult.isSafe) {
+          const proceed = confirm(`This website may be unsafe (${securityResult.riskLevel} risk).\n\nWarnings: ${securityResult.warnings.join(', ')}\n\nPlease be careful with what you do on this site, and do not enter any personal information (like bank info, ID, etc.) on this site.\n\nDo you want to continue?`);
+          if (!proceed) return;
+        }
+        if (state.history[state.index] !== fullUrl) {
           state.history = state.history.slice(0, state.index + 1);
-          state.history.push(pageKey);
+          state.history.push(fullUrl);
           state.index = state.history.length - 1;
         }
         renderApp();
@@ -262,10 +293,7 @@
       const shell = createElement('div', { className: 'browser-shell' });
       const sidebar = createElement('div', { className: 'sidebar' }, [
         createElement('div', { className: 'sidebar-logo' }, ['G']),
-        createElement('button', { className: 'nav-button active', type: 'button' }, [createElement('span', {}, ['🏠'])]),
-        createElement('button', { className: 'nav-button', type: 'button' }, [createElement('span', {}, ['🔥'])]),
-        createElement('button', { className: 'nav-button', type: 'button' }, [createElement('span', {}, ['🎮'])]),
-        createElement('button', { className: 'nav-button', type: 'button' }, [createElement('span', {}, ['💬'])]),
+        createElement('button', { className: 'nav-button active', type: 'button', innerHTML: '<?xml version="1.0" encoding="utf-8"?><!-- License: MIT. Made by michaelampr: https://github.com/michaelampr/jam --><svg fill="#000000" width="24px" height="24px" viewBox="-2 -2 24 24" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin" class="jam jam-home"><path d="M18 18V7.132l-8-4.8-8 4.8V18h4v-2.75a4 4 0 1 1 8 0V18h4zm-6 2v-4.75a2 2 0 1 0-4 0V20H2a2 2 0 0 1-2-2V7.132a2 2 0 0 1 .971-1.715l8-4.8a2 2 0 0 1 2.058 0l8 4.8A2 2 0 0 1 20 7.132V18a2 2 0 0 1-2 2h-6z"/></svg>' }),
       ]);
       const main = createElement('div', { className: 'main-shell' });
       const titleBar = createElement('div', { className: 'title-bar' }, [

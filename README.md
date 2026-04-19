@@ -1,8 +1,38 @@
 # Hyperia Browser
 
-A clean, minimal browser demo with installable web-app support for Linux, Mac, Windows 11, iOS, and Android.
+A clean, minimal browser with installable web-app support for Linux, Mac, Windows 11, iOS, and Android.
 
-## Ways to use it
+## Downloads
+
+### Desktop Applications
+Build the desktop versions using Electron:
+
+```bash
+# Install dependencies
+npm install
+
+# Build for your platform
+npm run electron-pack-linux    # For Linux
+npm run electron-pack-win      # For Windows
+npm run electron-pack-mac      # For macOS
+```
+
+The built applications will be in the `dist-electron` directory.
+
+### Mobile Applications
+For mobile apps, you can use Capacitor or React Native. The web version works as a PWA on mobile devices.
+
+### Web Version
+The browser works directly in modern web browsers and can be installed as a Progressive Web App (PWA).
+
+## Security Features
+
+- **Website Security Checks**: Before loading external websites, the browser performs basic security analysis
+- **Risk Assessment**: Checks for suspicious domain patterns and known safe domains
+- **User Warnings**: Displays warnings for potentially unsafe sites with options to continue or cancel
+- **HTTPS Preference**: Encourages secure connections
+
+## Building from Source
 
 ### 1. Direct download and open
 - Download the repository as a ZIP.

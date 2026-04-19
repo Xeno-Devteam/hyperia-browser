@@ -1,3 +1,35 @@
+// Basic security check - in a real implementation, this would use a service like Google Safe Browsing
+const checkWebsiteSecurity = async (url) => {
+  try {
+    // For demo purposes, we'll do basic checks
+    const domain = new URL(url).hostname;
+
+    // Check for known suspicious patterns
+    const suspiciousPatterns = [
+      /fake/i, /phish/i, /malware/i, /virus/i, /hack/i,
+      /free-money/i, /win-prize/i, /urgent/i, /account-suspended/i
+    ];
+
+    const isSuspicious = suspiciousPatterns.some(pattern => domain.match(pattern));
+
+    // Check if it's a known safe domain (very basic list)
+    const safeDomains = [
+      'google.com', 'github.com', 'stackoverflow.com', 'wikipedia.org',
+      'mozilla.org', 'apple.com', 'microsoft.com', 'amazon.com'
+    ];
+
+    const isKnownSafe = safeDomains.some(safe => domain.includes(safe));
+
+    return {
+      isSafe: !isSuspicious && (isKnownSafe || url.startsWith('https://')),
+      riskLevel: isSuspicious ? 'high' : isKnownSafe ? 'low' : 'medium',
+      warnings: isSuspicious ? ['Domain contains suspicious keywords'] : []
+    };
+  } catch (error) {
+    return { isSafe: false, riskLevel: 'unknown', warnings: ['Unable to analyze URL'] };
+  }
+};
+
 const pages = {
   'hyperia.local': {
     title: 'Hyperia Browser',
@@ -25,10 +57,14 @@ const createElement = (tag, props = {}, children = []) => {
   const el = document.createElement(tag);
   Object.entries(props).forEach(([key, value]) => {
     if (key === 'className') el.className = value;
+    else if (key === 'innerHTML') el.innerHTML = value;
     else if (key.startsWith('on') && typeof value === 'function') el.addEventListener(key.slice(2).toLowerCase(), value);
     else el.setAttribute(key, value);
   });
-  children.forEach((child) => el.append(child));
+  children.forEach((child) => {
+    if (typeof child === 'string') el.appendChild(document.createTextNode(child));
+    else if (child) el.appendChild(child);
+  });
   return el;
 };
 
@@ -42,12 +78,33 @@ const updateAddressBar = (input) => {
   input.value = `https://${state.history[state.index]}`;
 };
 
-const navigate = (route) => {
+const navigate = async (route) => {
   const cleanRoute = route.replace(/^https?:\/\//i, '').replace(/\/$/, '');
-  const pageKey = cleanRoute || 'hyperia.local';
-  if (state.history[state.index] !== pageKey) {
+  const fullUrl = cleanRoute.startsWith('http') ? cleanRoute : `https://${cleanRoute}`;
+
+  // For demo pages, use the old logic
+  if (fullUrl.includes('hyperia.local')) {
+    const pageKey = cleanRoute || 'hyperia.local';
+    if (state.history[state.index] !== pageKey) {
+      state.history = state.history.slice(0, state.index + 1);
+      state.history.push(pageKey);
+      state.index = state.history.length - 1;
+    }
+    renderApp();
+    return;
+  }
+
+  // Security check for real websites
+  const securityResult = await checkWebsiteSecurity(fullUrl);
+  if (!securityResult.isSafe) {
+    const proceed = confirm(`This website may be unsafe (${securityResult.riskLevel} risk).\n\nWarnings: ${securityResult.warnings.join(', ')}\n\nPlease be careful with what you do on this site, and do not enter any personal information (like bank info, ID, etc.) on this site.\n\nDo you want to continue?`);
+    if (!proceed) return;
+  }
+
+  // Update history and load in iframe
+  if (state.history[state.index] !== fullUrl) {
     state.history = state.history.slice(0, state.index + 1);
-    state.history.push(pageKey);
+    state.history.push(fullUrl);
     state.index = state.history.length - 1;
   }
   renderApp();
@@ -74,14 +131,29 @@ let contentBody;
 let backButton;
 let forwardButton;
 let refreshButton;
+let contentIframe;
+let contentContainer;
 
 const renderApp = () => {
-  const page = getCurrentPage();
-
+  const currentUrl = state.history[state.index];
   updateAddressBar(addressInput);
-  contentTitle.textContent = page.title;
-  contentSubtitle.textContent = page.subtitle;
-  contentBody.textContent = page.body;
+
+  if (currentUrl.includes('hyperia.local')) {
+    // Show demo content
+    const page = getCurrentPage();
+    contentTitle.textContent = page.title;
+    contentSubtitle.textContent = page.subtitle;
+    contentBody.textContent = page.body;
+    contentContainer.style.display = 'block';
+    if (contentIframe) contentIframe.style.display = 'none';
+  } else {
+    // Show iframe for real websites
+    if (contentIframe) {
+      contentIframe.src = currentUrl;
+      contentIframe.style.display = 'block';
+    }
+    contentContainer.style.display = 'none';
+  }
 
   backButton.disabled = state.index === 0;
   forwardButton.disabled = state.index >= state.history.length - 1;
@@ -98,7 +170,9 @@ export const renderBrowser = (root) => {
     ]),
     createElement('div', { className: 'window-title' }, [document.createTextNode('Hyperia Browser Demo')]),
     createElement('div', { className: 'window-actions' }, [
-      createElement('button', { className: 'icon-button', type: 'button', onClick: () => navigate('hyperia.local') }, ['Home']),
+      createElement('button', { className: 'icon-button', type: 'button', onClick: () => navigate('hyperia.local') }, [
+        createElement('span', { innerHTML: '<?xml version="1.0" encoding="utf-8"?><!-- License: MIT. Made by michaelampr: https://github.com/michaelampr/jam --><svg fill="#000000" width="16px" height="16px" viewBox="-2 -2 24 24" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin" class="jam jam-home"><path d="M18 18V7.132l-8-4.8-8 4.8V18h4v-2.75a4 4 0 1 1 8 0V18h4zm-6 2v-4.75a2 2 0 1 0-4 0V20H2a2 2 0 0 1-2-2V7.132a2 2 0 0 1 .971-1.715l8-4.8a2 2 0 0 1 2.058 0l8 4.8A2 2 0 0 1 20 7.132V18a2 2 0 0 1-2 2h-6z"/></svg>' })
+      ]),
     ]),
   ]);
 
@@ -124,11 +198,15 @@ export const renderBrowser = (root) => {
   ]);
 
   const content = createElement('div', { className: 'browser-content' }, [
-    createElement('div', { className: 'content-card' }, [
+    (contentContainer = createElement('div', { className: 'content-card' }, [
       (contentTitle = createElement('h1', { className: 'content-title' })),
       (contentSubtitle = createElement('p', { className: 'content-subtitle' })),
       (contentBody = createElement('p', { className: 'content-body' })),
-    ]),
+    ])),
+    (contentIframe = createElement('iframe', {
+      className: 'browser-iframe',
+      style: 'display: none; width: 100%; height: 600px; border: none;'
+    })),
   ]);
 
   app.append(titleBar, toolbar, tabs, content);
