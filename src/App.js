@@ -54,6 +54,8 @@ const state = {
   iframeMode: false,
 };
 
+const isElectron = typeof navigator !== 'undefined' && navigator.userAgent.toLowerCase().includes('electron');
+
 const createElement = (tag, props = {}, children = []) => {
   const el = document.createElement(tag);
   Object.entries(props).forEach(([key, value]) => {
@@ -160,13 +162,13 @@ const renderApp = () => {
     if (iframeFallback) iframeFallback.style.display = 'none';
     if (externalButton) externalButton.disabled = true;
   } else {
-    // Show iframe for real websites
+    // Show embedded content for real websites
     if (contentIframe) {
       contentIframe.src = currentUrl;
       contentIframe.style.display = 'block';
     }
     contentContainer.style.display = 'none';
-    if (iframeFallback) iframeFallback.style.display = 'block';
+    if (iframeFallback) iframeFallback.style.display = 'none';
     if (externalButton) externalButton.disabled = false;
   }
 
@@ -213,17 +215,18 @@ export const renderBrowser = (root) => {
     createElement('button', { className: 'tab add', type: 'button', onClick: () => navigate('hyperia.local') }, ['+']),
   ]);
 
+  const contentIframeTag = isElectron ? 'webview' : 'iframe';
   const content = createElement('div', { className: 'browser-content' }, [
     (contentContainer = createElement('div', { className: 'content-card' }, [
       (contentTitle = createElement('h1', { className: 'content-title' })),
       (contentSubtitle = createElement('p', { className: 'content-subtitle' })),
       (contentBody = createElement('p', { className: 'content-body' })),
     ])),
-    (contentIframe = createElement('webview', {
+    (contentIframe = createElement(contentIframeTag, {
       className: 'browser-iframe',
       style: 'display: none; width: 100%; border: none;',
-      webpreferences: 'webSecurity=no',
-      allow: 'fullscreen'
+      allow: 'fullscreen',
+      ...(isElectron ? { webpreferences: 'webSecurity=no' } : {})
     })),
     (iframeFallback = createElement('div', { className: 'iframe-fallback' }, [
       createElement('small', { className: 'iframe-fallback-text' }, ['If the page doesn\'t load, try the ↗ button to open externally.'])
@@ -237,5 +240,24 @@ export const renderBrowser = (root) => {
   app.append(titleBar, toolbar, tabs, content, warningBanner);
   root.innerHTML = '';
   root.append(app);
+
+  if (contentIframe && iframeFallback) {
+    if (isElectron) {
+      contentIframe.addEventListener('dom-ready', () => {
+        iframeFallback.style.display = 'none';
+      });
+      contentIframe.addEventListener('did-fail-load', () => {
+        iframeFallback.style.display = 'block';
+      });
+    } else {
+      contentIframe.addEventListener('load', () => {
+        iframeFallback.style.display = 'none';
+      });
+      contentIframe.addEventListener('error', () => {
+        iframeFallback.style.display = 'block';
+      });
+    }
+  }
+
   renderApp();
 };
