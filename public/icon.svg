@@ -1,12 +1,14 @@
 <svg width="192" height="192" viewBox="0 0 192 192" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#38bdf8" />
-      <stop offset="100%" stop-color="#7c3aed" />
+    <linearGradient id="bg" x1="0" y1="0" x2="192" y2="192" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#3bd6db" />
+      <stop offset="100%" stop-color="#0c88c1" />
     </linearGradient>
   </defs>
-  <rect width="192" height="192" rx="40" fill="#0b1120" />
-  <path d="M56 68C56 60.268 62.268 54 70 54H122C129.732 54 136 60.268 136 68V124C136 131.732 129.732 138 122 138H70C62.268 138 56 131.732 56 124V68Z" fill="url(#grad)" />
-  <path d="M72 74H120V88H72V74Z" fill="#f8fafc" opacity="0.88" />
-  <path d="M72 104H104V116H72V104Z" fill="#f8fafc" opacity="0.88" />
+  <rect width="192" height="192" rx="36" fill="url(#bg)" />
+  <path d="M28 28h42v14H42v26H28V28zm136 0h28v28h-14V42h-26V28zm28 136v28h-28v-14h26v-26h14zm-136 28h42v-14H42v-26H28v28z" fill="#ffffff" opacity="0.88" />
+  <path d="M108 48l22 42h4l-28-48-28 48h4l22-42zm-24 44l-4 22 12-12 12 12-4-22h-16z" fill="#000000" />
+  <path d="M96 58l-16 34h32L96 58zm-18 22l8-18 8 18h-16z" fill="#3ef0ff" />
+  <path d="M72 100l24 22 24-22v18c0 6-6 10-12 10h-24c-6 0-12-4-12-10v-18z" fill="#000000" />
+  <path d="M78 104l18 16 18-16v10c0 3-3 5-6 5h-24c-3 0-6-2-6-5v-10z" fill="#07d9ff" />
 </svg>
