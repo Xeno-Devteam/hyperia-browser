@@ -2,6 +2,45 @@
 
 A clean, minimal browser with installable web-app support for Linux, Mac, Windows 11, iOS, and Android.
 
+## 🚀 Quick Start
+
+### Desktop (Electron)
+```bash
+npm install
+npm run start  # Runs the full browser with tabs
+```
+
+### Web/Mobile (Browser)
+```bash
+npm install
+npm run web    # Runs as web app with CORS proxy
+```
+
+### Development
+```bash
+npm run dev    # Development server
+```
+
+## 📱 Mobile & Web Testing
+
+Since you can't run Electron on mobile, use the **web version**:
+
+1. Run `npm run web` on any computer
+2. Open the provided URL on your mobile device
+3. Install as PWA for app-like experience
+4. Test tab functionality with CORS proxy
+
+**Features that work in web version:**
+- ✅ Dynamic tab creation/closing
+- ✅ Tab titles and favicons
+- ✅ Navigation controls
+- ✅ CORS proxy for external sites
+- ⚠️ Limited by browser security (no full browsing)
+
+**Note:** The web version uses cors-anywhere.herokuapp.com as a proxy. For production, you'd want to run your own CORS proxy server.
+
+⚠️ **Security Warning:** The CORS proxy allows loading any website. Be careful with what sites you visit, as the proxy can access your data.
+
 ## Downloads
 
 ### Pre-built Binaries

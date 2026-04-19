@@ -152,10 +152,23 @@ const navigate = async (url) => {
 
     window.electronAPI.navigateTab(state.activeTabId, fullUrl);
   } else {
-    // Fallback - just update the current tab
+    // Web version with CORS proxy for demo purposes
+    // Note: In production, you'd want to run your own CORS proxy
+    const corsProxy = 'https://cors-anywhere.herokuapp.com/';
+    const proxiedUrl = fullUrl.startsWith('http') ? `${corsProxy}${fullUrl}` : `${corsProxy}https://${fullUrl}`;
+
+    // Basic security check for web version
+    const securityResult = await checkWebsiteSecurity(fullUrl);
+    if (!securityResult.isSafe) {
+      const proceed = confirm(`This website may be unsafe (${securityResult.riskLevel} risk).\n\nWarnings: ${securityResult.warnings.join(', ')}\n\nDo you want to continue?`);
+      if (!proceed) return;
+    }
+
+    // Update the current tab
     const tab = state.tabs.find(t => t.id === state.activeTabId);
     if (tab) {
-      tab.url = fullUrl;
+      tab.url = fullUrl; // Store original URL for display
+      tab.proxiedUrl = proxiedUrl; // Use proxied URL for iframe
       tab.title = 'Loading...';
       renderTabs();
       renderContent();
@@ -224,15 +237,16 @@ const renderContent = () => {
     contentContainer.append(contentCard);
   } else {
     // Show webview for external sites
-    if (isElectron) {
+    if (isElectron && document.createElement('webview').constructor.name === 'HTMLWebViewElement') {
       const webview = createElement('webview', {
         className: 'browser-webview',
         src: activeTab.url,
-        allow: 'fullscreen *',
-        webpreferences: 'contextIsolation=yes, nodeIntegration=no'
+        allow: 'fullscreen',
+        webpreferences: 'contextIsolation=yes,nodeIntegration=no,webSecurity=yes'
       });
 
       webview.addEventListener('dom-ready', () => {
+        console.log('Webview DOM ready for:', activeTab.url);
         // Get title and favicon
         webview.executeJavaScript(`
           ({
@@ -241,6 +255,7 @@ const renderContent = () => {
               .find(link => link.href)?.href || null
           })
         `).then(data => {
+          console.log('Page data:', data);
           if (isElectron && window.electronAPI) {
             window.electronAPI.updateTab(activeTab.id, {
               title: data.title,
@@ -250,15 +265,43 @@ const renderContent = () => {
         }).catch(console.error);
       });
 
+      webview.addEventListener('did-fail-load', (event) => {
+        console.error('Webview failed to load:', event);
+      });
+
+      webview.addEventListener('console-message', (event) => {
+        console.log('Webview console:', event.message);
+      });
+
       webviewContainer.append(webview);
     } else {
-      // Fallback for non-Electron
+      console.log('Using iframe with CORS proxy for web version');
+      // Web version with CORS proxy
       const iframe = createElement('iframe', {
         className: 'browser-iframe',
-        src: activeTab.url,
-        allow: 'fullscreen *',
+        src: activeTab.proxiedUrl || activeTab.url,
+        allow: 'fullscreen',
         sandbox: 'allow-same-origin allow-top-navigation allow-scripts allow-forms allow-popups allow-modals allow-presentation allow-pointer-lock'
       });
+
+      // Try to extract title from iframe (limited by CORS)
+      iframe.addEventListener('load', () => {
+        try {
+          // This will fail due to CORS, but we can try
+          const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+          if (iframeDoc && iframeDoc.title) {
+            activeTab.title = iframeDoc.title;
+            updateTabElement(activeTab);
+          }
+        } catch (e) {
+          console.log('Cannot access iframe content due to CORS');
+          // Fallback: try to guess title from URL
+          const domain = activeTab.url.replace(/^https?:\/\//, '').split('/')[0];
+          activeTab.title = domain || 'Web Page';
+          updateTabElement(activeTab);
+        }
+      });
+
       webviewContainer.append(iframe);
     }
   }
