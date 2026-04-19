@@ -13,6 +13,7 @@ function createWindow() {
       contextIsolation: true,
       enableRemoteModule: false,
       webSecurity: false,
+      webviewTag: true,
       preload: path.join(__dirname, 'dist-electron/preload.js')
     },
     icon: path.join(__dirname, 'public/icon.png'),

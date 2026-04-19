@@ -219,9 +219,10 @@ export const renderBrowser = (root) => {
       (contentSubtitle = createElement('p', { className: 'content-subtitle' })),
       (contentBody = createElement('p', { className: 'content-body' })),
     ])),
-    (contentIframe = createElement('iframe', {
+    (contentIframe = createElement('webview', {
       className: 'browser-iframe',
       style: 'display: none; width: 100%; border: none;',
+      webpreferences: 'webSecurity=no',
       allow: 'fullscreen'
     })),
     (iframeFallback = createElement('div', { className: 'iframe-fallback' }, [
