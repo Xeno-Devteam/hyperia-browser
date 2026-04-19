@@ -105,20 +105,7 @@ const navigate = async (route) => {
     if (!proceed) return;
   }
 
-  if (!isElectron) {
-    // In a normal browser, open real sites externally instead of embedding.
-    window.open(fullUrl, '_blank', 'noopener,noreferrer');
-
-    if (state.history[state.index] !== fullUrl) {
-      state.history = state.history.slice(0, state.index + 1);
-      state.history.push(fullUrl);
-      state.index = state.history.length - 1;
-    }
-    renderApp();
-    return;
-  }
-
-  // For real websites, load in webview in Electron
+  // Load in webview/iframe for all platforms
   if (state.history[state.index] !== fullUrl) {
     state.history = state.history.slice(0, state.index + 1);
     state.history.push(fullUrl);
