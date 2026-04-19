@@ -10,8 +10,8 @@ Download the latest pre-built binaries:
 - **Linux**: [Hyperia Browser-1.0.0.AppImage](dist-electron/Hyperia%20Browser-1.0.0.AppImage)
 - **Windows 11**: Build with `npm run electron-pack-win` (generates .exe)
 - **Mac**: Build with `npm run electron-pack-mac` (generates .app)
-- **Android**: Use as PWA or build with Capacitor for APK
-- **iOS**: Use as PWA or build with Capacitor for IPA
+- **Android**: [Download APK](./HyperiaBrowser.apk)
+- **iOS**: Build a native `.ipa` using Capacitor + Xcode (see below)
 
 ### Desktop Applications
 Build the desktop versions using Electron:
@@ -30,6 +30,50 @@ The built applications will be in the `dist-electron` directory.
 
 ### Mobile Applications
 For mobile apps, you can use Capacitor or React Native. The web version works as a PWA on mobile devices.
+
+### macOS and iOS Build Process
+#### macOS `.app`
+To make a native macOS `.app` bundle:
+
+1. Run `npm install`.
+2. Build the Electron app on macOS:
+   ```bash
+   npm run electron-pack-mac
+   ```
+3. The resulting `.app` will be placed in the `dist-electron/` output directory.
+
+> Note: Building a macOS app usually requires a macOS build machine.
+
+#### iOS `.ipa`
+This project is currently a web app, so creating a native iOS `.ipa` requires wrapping it with Capacitor and using Xcode.
+
+1. Install Capacitor:
+   ```bash
+   npm install @capacitor/core @capacitor/cli --save-dev
+   ```
+2. Initialize Capacitor in the repo:
+   ```bash
+   npx cap init HyperiaBrowser com.hyperia.browser
+   ```
+3. Add the iOS platform:
+   ```bash
+   npx cap add ios
+   ```
+4. Build the web app assets:
+   ```bash
+   npm run build
+   ```
+5. Sync the web build to iOS:
+   ```bash
+   npx cap sync ios
+   ```
+6. Open the Xcode project:
+   ```bash
+   npx cap open ios
+   ```
+7. In Xcode, archive the app and export an `.ipa`.
+
+> Building an iOS `.ipa` requires macOS and Xcode, plus an Apple developer account for signing.
 
 ### Web Version
 The browser works directly in modern web browsers and can be installed as a Progressive Web App (PWA).
