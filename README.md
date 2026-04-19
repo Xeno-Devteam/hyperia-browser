@@ -154,6 +154,15 @@ When hosted or served locally, the app supports browser install prompts:
 - Download the ZIP directly from GitHub.
 - Open `demo.html` with a browser for a clean local preview.
 
+## Alternate options
+If you aren't able to download HyperiaBrowser normally,
+We are live at 2 domains:
+- [Netlify Domain](https://hyperia-browser.netlify.app/)
+- [GitHub Pages Domain](https://xeno-devteam.github.io/hyperia-browser/)
+  Please note that these are demos, and they won't work all the time.
+
+
+
 ## Project structure
 
 - `index.html` — demo shell entry point
@@ -164,3 +173,9 @@ When hosted or served locally, the app supports browser install prompts:
 - `public/manifest.webmanifest` — installable web app manifest
 - `public/sw.js` — optional caching service worker
 - `public/logo.svg` — install icon for the web app
+
+
+### Notice
+Some sites have special scripts, that block any other sites from implementing their site as a display.
+We are aware of this, and any site that does use that special script will show "example.com refused to connect" in the display frame.
+We will try and fix it soon, but until then, stay tuned at [My Bloxdhub](https://bloxdhub.com/@BredLeGoober)
