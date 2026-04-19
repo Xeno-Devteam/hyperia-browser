@@ -220,7 +220,11 @@ export const renderBrowser = (root) => {
     })),
   ]);
 
-  app.append(titleBar, toolbar, tabs, content);
+  const warningBanner = createElement('div', { className: 'beta-warning' }, [
+    createElement('p', { className: 'beta-warning-text' }, ['*Project still in beta v.1.0. If you find a bug, please go to the GitHub page (https://github.com/Xeno-Devteam/hyperia-browser), go to Issues, and create a new issue explaining the error, and we will try our best to fix it.'])
+  ]);
+
+  app.append(titleBar, toolbar, tabs, content, warningBanner);
   root.innerHTML = '';
   root.append(app);
   renderApp();
