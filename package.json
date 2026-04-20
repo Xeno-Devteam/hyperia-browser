@@ -1,17 +1,21 @@
 {
   "name": "hyperia-browser",
   "version": "1.0.0",
-  "description": "A clean, minimal browser with security checks",
+  "description": "A clean, minimal browser with installable web and Electron packaging support",
   "author": "Xeno-Devteam",
   "private": true,
-  "type": "module",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "web": "vite preview --host",
     "dev": "vite",
+    "web": "vite preview --host",
     "build": "vite build",
-    "build-electron": "vite build && electron-builder",
+    "build:web": "vite build",
+    "build-electron": "npm run build && electron-builder",
+    "package": "npm run build-electron",
+    "package:linux": "npm run build && electron-builder --linux AppImage",
+    "package:win": "npm run build && electron-builder --win nsis",
+    "package:mac": "npm run build && electron-builder --mac",
     "preview": "vite preview"
   },
   "devDependencies": {
@@ -30,14 +34,23 @@
       "main.js",
       "preload.js"
     ],
+    "asar": true,
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true
+    },
     "mac": {
+      "target": ["dmg", "zip"],
       "category": "public.app-category.productivity"
     },
     "win": {
-      "target": "nsis"
+      "target": ["nsis", "zip"]
     },
     "linux": {
-      "target": "AppImage"
+      "target": ["AppImage", "deb"],
+      "category": "Utility"
     }
   }
 }

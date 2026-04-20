@@ -1,12 +1,12 @@
 {
-  "name": "Hyperia Browser Demo",
-  "short_name": "Hyperia Demo",
-  "description": "A clean, installable browser demo shell for Linux, Mac, Windows, iOS and Android.",
-  "start_url": "./",
-  "scope": "./",
+  "name": "Hyperia Browser",
+  "short_name": "Hyperia",
+  "description": "A clean, installable browser shell with fast UI and PWA support for desktop and mobile.",
+  "start_url": ".",
+  "scope": ".",
   "display": "standalone",
-  "background_color": "#070b14",
-  "theme_color": "#0b1120",
+  "background_color": "#260c42",
+  "theme_color": "#260c42",
   "icons": [
     {
       "src": "./logo.svg",

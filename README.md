@@ -7,14 +7,22 @@ A clean, minimal browser with installable web-app support for Linux, Mac, Window
 ### Desktop (Electron)
 ```bash
 npm install
-npm run start  # Runs the full browser with tabs
+npm run start  # Run the browser locally during development
+```
+
+### Build a packaged desktop app
+```bash
+npm install
+npm run package  # Build installers/bundles with electron-builder
 ```
 
 ### Web/Mobile (Browser)
 ```bash
 npm install
-npm run web    # Runs as web app with CORS proxy
+npm run web    # Runs the same browser UI as a web app
 ```
+
+The web app and Electron app share the same UI, so the browser experience stays consistent whether you use the website or download the packaged app.
 
 ### Development
 ```bash
@@ -46,11 +54,11 @@ Since you can't run Electron on mobile, use the **web version**:
 ### Pre-built Binaries
 Download the latest pre-built binaries:
 
-- **Linux**: [Hyperia Browser-1.0.0.AppImage](dist-electron/Hyperia%20Browser-1.0.0.AppImage)
+- **Linux**: Build with `npm run electron-pack-linux` or use the prebuilt AppImage at `dist-electron/Hyperia Browser-1.0.0.AppImage`
 - **Windows 11**: Build with `npm run electron-pack-win` (generates .exe)
 - **Mac**: Build with `npm run electron-pack-mac` (generates .app)
-- **Android**: [Download APK](./Hyperia-Browser.apk)
-- **iOS**: Build a native `.ipa` using Capacitor + Xcode (see below)
+- **Android**: Install the website as a PWA via Chrome on Android
+- **iOS**: Install the website as a PWA via Safari, or wrap with Capacitor if you need a native app
 
 ### Desktop Applications
 You can run the app directly with the prebuilt Linux AppImage in this repo:

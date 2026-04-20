@@ -139,11 +139,21 @@ const createNewTab = (url = 'https://hyperia.local') => {
 
 // Navigation
 const navigate = async (url) => {
-  const cleanUrl = url.replace(/^https?:\/\//i, '').replace(/\/$/, '');
-  const fullUrl = cleanUrl.startsWith('http') ? cleanUrl : `https://${cleanUrl}`;
+  const input = (url || '').trim();
+  if (!input) return;
+
+  const fullUrl = input.match(/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//)
+    ? input
+    : `https://${input.replace(/^(https?:\/\/)/i, '')}`;
+
+  try {
+    new URL(fullUrl);
+  } catch (error) {
+    alert('Please enter a valid web address or URL.');
+    return;
+  }
 
   if (isElectron && window.electronAPI) {
-    // Security check
     const securityResult = await window.electronAPI.checkSecurity(fullUrl);
     if (!securityResult.isSafe) {
       const proceed = confirm(`This website may be unsafe (${securityResult.riskLevel} risk).\n\nWarnings: ${securityResult.warnings.join(', ')}\n\nDo you want to continue?`);
@@ -151,28 +161,24 @@ const navigate = async (url) => {
     }
 
     window.electronAPI.navigateTab(state.activeTabId, fullUrl);
-  } else {
-    // Web version with CORS proxy for demo purposes
-    // Note: In production, you'd want to run your own CORS proxy
-    const corsProxy = 'https://cors-anywhere.herokuapp.com/';
-    const proxiedUrl = fullUrl.startsWith('http') ? `${corsProxy}${fullUrl}` : `${corsProxy}https://${fullUrl}`;
+    return;
+  }
 
-    // Basic security check for web version
-    const securityResult = await checkWebsiteSecurity(fullUrl);
-    if (!securityResult.isSafe) {
-      const proceed = confirm(`This website may be unsafe (${securityResult.riskLevel} risk).\n\nWarnings: ${securityResult.warnings.join(', ')}\n\nDo you want to continue?`);
-      if (!proceed) return;
-    }
+  const corsProxy = 'https://cors-anywhere.herokuapp.com/';
+  const proxiedUrl = `${corsProxy}${fullUrl}`;
+  const securityResult = await checkWebsiteSecurity(fullUrl);
+  if (!securityResult.isSafe) {
+    const proceed = confirm(`This website may be unsafe (${securityResult.riskLevel} risk).\n\nWarnings: ${securityResult.warnings.join(', ')}\n\nDo you want to continue?`);
+    if (!proceed) return;
+  }
 
-    // Update the current tab
-    const tab = state.tabs.find(t => t.id === state.activeTabId);
-    if (tab) {
-      tab.url = fullUrl; // Store original URL for display
-      tab.proxiedUrl = proxiedUrl; // Use proxied URL for iframe
-      tab.title = 'Loading...';
-      renderTabs();
-      renderContent();
-    }
+  const tab = state.tabs.find(t => t.id === state.activeTabId);
+  if (tab) {
+    tab.url = fullUrl;
+    tab.proxiedUrl = proxiedUrl;
+    tab.title = 'Loading...';
+    renderTabs();
+    renderContent();
   }
 };
 
@@ -198,15 +204,14 @@ const reload = () => {
 
 // Rendering
 const renderTabs = () => {
-  // Clear existing tabs except the new tab button
   const existingTabs = tabsContainer.querySelectorAll('.tab:not(.add)');
   existingTabs.forEach(tab => tab.remove());
 
-  // Add current tabs
+  const fragment = document.createDocumentFragment();
   state.tabs.forEach(tab => {
-    const tabEl = createTabElement(tab);
-    tabsContainer.insertBefore(tabEl, newTabButton);
+    fragment.appendChild(createTabElement(tab));
   });
+  tabsContainer.insertBefore(fragment, newTabButton);
 };
 
 const renderContent = () => {
@@ -402,13 +407,16 @@ export const renderBrowser = (root) => {
     createElement('p', { className: 'beta-warning-text' }, ['*Project still in beta v.1.0. If you find a bug, please go to the GitHub page (https://github.com/Xeno-Devteam/hyperia-browser), go to Issues, and create a new issue explaining the error, and we will try our best to fix it.'])
   ]);
 
-  app.append(titleBar, toolbar, tabsContainer, browserContent, warningBanner);
+  app.append(titleBar, tabsContainer, toolbar, browserContent, warningBanner);
   root.innerHTML = '';
   root.append(app);
 
   setupEventListeners();
 
-  // Initialize with a tab if none exist
+  if (!state.activeTabId && state.tabs.length) {
+    state.activeTabId = state.tabs[0].id;
+  }
+
   if (state.tabs.length === 0) {
     createNewTab();
   } else {
