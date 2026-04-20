@@ -1,13 +1,4 @@
-name: Build Hyperia Browser
-
-on:
-  push:
-    tags:
-      - "v*"
-  workflow_dispatch:
-
-jobs:
-  name: Build Hyperia Browser
+name: Build & Release Hyperia Browser
 
 on:
   push:
@@ -17,6 +8,7 @@ on:
 
 jobs:
   build:
+    name: Build on ${{ matrix.os }}
     strategy:
       matrix:
         os: [windows-latest, ubuntu-latest, macos-latest]
@@ -38,40 +30,43 @@ jobs:
       - name: Build frontend
         run: npm run build
 
-      - name: Build Electron app
-        run: npx electron-builder --publish never
+      - name: Build Electron app (native per OS)
+        run: |
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            npx electron-builder --win --publish never
+          elif [ "$RUNNER_OS" == "Linux" ]; then
+            npx electron-builder --linux --publish never
+          else
+            npx electron-builder --mac --publish never
+          fi
+        shell: bash
 
-      - name: Upload build artifacts
+      - name: List output (debug)
+        run: ls -R dist-electron || true
+
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.os }}-build
-          path: |
-            dist-electron/**
-            dist/**
-            release/**
+          name: ${{ matrix.os }}
+          path: dist-electron/**
 
-release:
-  needs: build
-  runs-on: ubuntu-latest
+  release:
+    name: Create GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
 
-  steps:
-    - name: Download all artifacts into one folder
-      uses: actions/download-artifact@v4
-      with:
-        path: release-assets
-
-    - name: Show what was downloaded (debug step 👀)
-      run: ls -R release-assets
-
-    - name: Create GitHub Release
-      uses: softprops/action-gh-release@v3
-      with:
-        files: release-assets/**/*
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+    steps:
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v4
         with:
-  files: |
-    release-assets/windows-latest-build/**
-    release-assets/ubuntu-latest-build/**
-    release-assets/macos-latest-build/**
+          path: release-assets
+
+      - name: Show collected files (debug)
+        run: ls -R release-assets
+
+      - name: Publish Release
+        uses: softprops/action-gh-release@v3
+        with:
+          files: release-assets/**/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
