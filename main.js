@@ -9,9 +9,8 @@ const preloadPath = fs.existsSync(path.join(__dirname, 'preload.js'))
 const iconPath = fs.existsSync(path.join(__dirname, 'public', 'logo.svg'))
   ? path.join(__dirname, 'public', 'logo.svg')
   : path.join(__dirname, '../public/logo.svg');
-const indexHtmlPath = fs.existsSync(path.join(__dirname, 'dist', 'index.html'))
-  ? path.join(__dirname, 'dist', 'index.html')
-  : path.join(__dirname, '../dist/index.html');
+  const indexHtmlPath = path.join(__dirname, 'dist', 'index.html');
+  
 
 let mainWindow;
 let tabs = new Map(); // tabId -> { webContentsId, url, title, favicon }
