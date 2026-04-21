@@ -55,7 +55,7 @@ const createTabElement = (tab) => {
       e.stopPropagation();
       closeTab(tab.id);
     }
-  }, ['×']);
+  }, ['✕']);
 
   tabEl.append(favicon, title, closeBtn);
 
@@ -315,19 +315,19 @@ const renderContent = () => {
 const getDemoPage = (url) => {
   const pages = {
     'https://hyperia.local': {
-      title: 'Hyperia Browser',
-      subtitle: 'A clean, controlled browser demo experience.',
-      body: 'This demo shows a minimal browser shell with responsive controls, quick navigation, and a calm interface designed for speed and focus.',
+      title: 'Welcome to Hyperia',
+      subtitle: 'Next-Generation Web Experience',
+      body: 'Experience the future of browsing with our sleek, secure, and lightning-fast interface. Navigate the web with unparalleled speed and elegance.',
     },
     'https://hyperia.local/about': {
-      title: 'About the Demo',
-      subtitle: 'Fast and minimal browser UI.',
-      body: 'The interface is intentionally kept simple: a title bar, toolbar, address entry, tabs, and content area. Everything is styled for clarity and fast scanning.',
+      title: 'About Hyperia',
+      subtitle: 'Revolutionary Browser Technology',
+      body: 'Built with cutting-edge web technologies, Hyperia delivers a seamless browsing experience with advanced security features and minimalist design philosophy.',
     },
     'https://hyperia.local/focus': {
       title: 'Focus Mode',
-      subtitle: 'Controlled browsing made clean.',
-      body: 'Clean design means fewer distractions. The content area is a stable canvas with measured spacing, subtle transitions, and easy-to-scan typography.',
+      subtitle: 'Distraction-Free Environment',
+      body: 'Immerse yourself in content without distractions. Our focus mode eliminates clutter and enhances readability for maximum productivity.',
     },
   };
 
@@ -378,10 +378,10 @@ export const renderBrowser = (root) => {
 
   // Toolbar
   const toolbar = createElement('div', { className: 'toolbar' });
-  backButton = createElement('button', { className: 'tool-button', type: 'button', onClick: goBack }, ['◀']);
-  forwardButton = createElement('button', { className: 'tool-button', type: 'button', onClick: goForward }, ['▶']);
-  refreshButton = createElement('button', { className: 'tool-button', type: 'button', onClick: reload }, ['⟳']);
-  addressInput = createElement('input', { className: 'address-input', type: 'text', placeholder: 'https://hyperia.local' });
+  backButton = createElement('button', { className: 'tool-button', type: 'button', onClick: goBack }, ['←']);
+  forwardButton = createElement('button', { className: 'tool-button', type: 'button', onClick: goForward }, ['→']);
+  refreshButton = createElement('button', { className: 'tool-button', type: 'button', onClick: reload }, ['↻']);
+  addressInput = createElement('input', { className: 'address-input', type: 'text', placeholder: 'Search or enter address...' });
 
   addressInput.addEventListener('keydown', (event) => {
     if (event.key === 'Enter') {
@@ -404,7 +404,7 @@ export const renderBrowser = (root) => {
 
   // Beta warning
   const warningBanner = createElement('div', { className: 'beta-warning' }, [
-    createElement('p', { className: 'beta-warning-text' }, ['*Project still in beta v.1.0. If you find a bug, please go to the GitHub page (https://github.com/Xeno-Devteam/hyperia-browser), go to Issues, and create a new issue explaining the error, and we will try our best to fix it.'])
+    createElement('p', { className: 'beta-warning-text' }, ['⚠️ This is a beta version. Report issues at https://github.com/Xeno-Devteam/hyperia-browser'])
   ]);
 
   app.append(titleBar, tabsContainer, toolbar, browserContent, warningBanner);
