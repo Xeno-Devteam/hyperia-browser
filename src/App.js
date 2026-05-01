@@ -137,6 +137,24 @@ const createNewTab = (url = 'https://hyperia.local') => {
   }
 };
 
+// Security check function
+const checkWebsiteSecurity = async (url) => {
+  try {
+    const domain = new URL(url).hostname;
+    const suspiciousPatterns = [/fake/i, /phish/i, /malware/i, /virus/i, /hack/i, /free-money/i, /win-prize/i, /urgent/i, /account-suspended/i];
+    const isSuspicious = suspiciousPatterns.some(pattern => domain.match(pattern));
+    const safeDomains = ['google.com', 'github.com', 'stackoverflow.com', 'wikipedia.org', 'mozilla.org', 'apple.com', 'microsoft.com', 'amazon.com'];
+    const isKnownSafe = safeDomains.some(safe => domain.includes(safe));
+    return {
+      isSafe: !isSuspicious && (isKnownSafe || url.startsWith('https://')),
+      riskLevel: isSuspicious ? 'high' : isKnownSafe ? 'low' : 'medium',
+      warnings: isSuspicious ? ['Domain contains suspicious keywords'] : []
+    };
+  } catch (error) {
+    return { isSafe: false, riskLevel: 'unknown', warnings: ['Unable to analyze URL'] };
+  }
+};
+
 // Navigation
 const navigate = async (url) => {
   const input = (url || '').trim();
