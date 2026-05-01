@@ -164,8 +164,8 @@ const navigate = async (url) => {
     return;
   }
 
-  const corsProxy = 'https://cors-anywhere.herokuapp.com/';
-  const proxiedUrl = `${corsProxy}${fullUrl}`;
+  const corsProxy = 'https://api.allorigins.win/raw?url=';
+  const proxiedUrl = `${corsProxy}${encodeURIComponent(fullUrl)}`;
   const securityResult = await checkWebsiteSecurity(fullUrl);
   if (!securityResult.isSafe) {
     const proceed = confirm(`This website may be unsafe (${securityResult.riskLevel} risk).\n\nWarnings: ${securityResult.warnings.join(', ')}\n\nDo you want to continue?`);
