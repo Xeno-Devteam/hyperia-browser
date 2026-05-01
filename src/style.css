@@ -326,6 +326,7 @@ body {
 
 .webview-container {
   flex: 1;
+  display: flex;
   background: var(--secondary-bg);
   border-radius: 0;
 }

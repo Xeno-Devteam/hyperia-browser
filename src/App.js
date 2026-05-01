@@ -251,6 +251,8 @@ const renderContent = () => {
 
   if (activeTab.url.includes('hyperia.local')) {
     // Show demo content
+    contentContainer.style.display = 'flex';
+    webviewContainer.style.display = 'none';
     const page = getDemoPage(activeTab.url);
     const contentCard = createElement('div', { className: 'content-card' }, [
       createElement('h1', { className: 'content-title' }, [page.title]),
@@ -260,6 +262,8 @@ const renderContent = () => {
     contentContainer.append(contentCard);
   } else {
     // Show webview for external sites
+    contentContainer.style.display = 'none';
+    webviewContainer.style.display = 'flex';
     if (isElectron && document.createElement('webview').constructor.name === 'HTMLWebViewElement') {
       const webview = createElement('webview', {
         className: 'browser-webview',
