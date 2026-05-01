@@ -389,7 +389,9 @@ export const renderBrowser = (root) => {
     }
   });
 
-  toolbar.append(backButton, forwardButton, refreshButton, addressInput);
+  const goButton = createElement('button', { className: 'tool-button go-button', type: 'button', onClick: () => navigate(addressInput.value.trim()) }, ['Go']);
+
+  toolbar.append(backButton, forwardButton, refreshButton, addressInput, goButton);
 
   // Tabs
   tabsContainer = createElement('div', { className: 'tabs' });

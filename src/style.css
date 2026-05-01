@@ -173,6 +173,21 @@ body {
   background: rgba(255, 255, 255, 0.08);
 }
 
+.go-button {
+  margin-left: 8px;
+  min-width: 60px;
+  font-weight: 600;
+  background: linear-gradient(135deg, var(--accent-purple) 0%, var(--accent-purple-light) 100%);
+  border: 1px solid var(--accent-purple);
+  color: white;
+}
+
+.go-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--accent-purple-dark) 0%, var(--accent-purple) 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.3);
+}
+
 /* Tabs */
 .tabs {
   display: flex;
